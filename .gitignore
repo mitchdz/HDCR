@@ -105,3 +105,9 @@ full-package-name-VERSION/
 *-coverage/
 *.gcda
 *.gcno
+
+ar-lib
+config.guess
+config.sub
+ltmain.sh
+
