@@ -111,3 +111,4 @@ config.guess
 config.sub
 ltmain.sh
 
+src_vars.mk

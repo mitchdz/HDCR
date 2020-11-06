@@ -19,7 +19,6 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 # Checks for libraries.
 
@@ -37,9 +36,7 @@ AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
-AC_CONFIG_FILES([Makefile
-                 libdip/Makefile
-                 src/Makefile])
+AC_CONFIG_FILES([Makefile])
 
 SUBDIRS = src libdip
 

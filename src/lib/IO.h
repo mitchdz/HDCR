@@ -2,11 +2,9 @@
 #define IO_H
 
 #include <stdint.h>
+#include "../libdip/src/dip.h"
+#include "../libdip/src/pngio.h"
 #include "ECE576A.h"
-
-// from libdip
-#include "dip.h"
-#include "pngio.h"
 
 /* @brief writePNG writes a png to a file
  * @param raw_data uint8_t pseudo 2-D array created by matalloc

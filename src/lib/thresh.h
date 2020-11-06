@@ -7,10 +7,12 @@
 
 #include <stdint.h>
 #include <stdio.h>
-
-// from libdip
-#include "pngio.h"
-#include "dip.h"
+// include all of the libdip header and source files
+// note: this looks awful. Instead we could just include
+// the .h and .c files and provide path to gcc with -I../libdip/src
+// but alas I am here not doing that.
+#include "../libdip/src/pngio.h"
+#include "../libdip/src/dip.h"
 
 typedef enum {
     UINT8_T,
