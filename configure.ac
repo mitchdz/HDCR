@@ -1,6 +1,3 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
 AC_PREREQ([2.69])
 AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
 AM_INIT_AUTOMAKE([foreign])
@@ -9,18 +6,19 @@ AC_CONFIG_HEADERS([config.h])
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
-# Checks for programs.
-AC_PROG_CXX
-AC_PROG_AWK
+# propagate configure arguments to distcheck
+AC_SUBST([DISTCHECK_CONFIGURE_FLAGS],[$ac_configure_args])
+
 AC_PROG_CC
-AC_PROG_CPP
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
+LT_INIT
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
-# Checks for libraries.
+PKG_INSTALLDIR()
+
+AX_CODE_COVERAGE
+
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h limits.h stdint.h stdlib.h string.h unistd.h])
@@ -37,7 +35,5 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
 AC_CONFIG_FILES([Makefile])
-
-SUBDIRS = src libdip
 
 AC_OUTPUT
