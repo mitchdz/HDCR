@@ -20,7 +20,7 @@ echo "Generating file lists: ${VARS_FILE}"
 (
   src_listvar "src" "*.c" "HDCR_C"
   src_listvar "src" "*.h" "HDCR_H"
-  printf "HDCR_SRC = \$(LIB_PKCS11_C) \$(LIB_PKCS11_H)\n"
+  printf "HDCR_SRC = \$(HDCR_C) \$(HDCR_H)\n"
 
   src_listvar "src/lib" "*.c" "LIB_HDCR_C"
   src_listvar "src/lib" "*.h" "LIB_HDCR_H"

@@ -2,8 +2,8 @@
 #define IO_H
 
 #include <stdint.h>
-#include "../libdip/src/dip.h"
-#include "../libdip/src/pngio.h"
+#include "dip.h"
+#include "pngio.h"
 #include "ECE576A.h"
 
 /* @brief writePNG writes a png to a file

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "hw5.h"
+#include "hdcr.h"
 #include "thresh.h"
 #include "mcc.h"
 #include "IO.h"

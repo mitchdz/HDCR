@@ -1,8 +1,8 @@
 AC_PREREQ([2.69])
 AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
-AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
+
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT
@@ -13,12 +13,12 @@ AC_SUBST([DISTCHECK_CONFIGURE_FLAGS],[$ac_configure_args])
 
 AC_PROG_CC
 LT_INIT
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+#AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE
 
 PKG_INSTALLDIR()
 
 AX_CODE_COVERAGE
-
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h limits.h stdint.h stdlib.h string.h unistd.h])
@@ -34,6 +34,16 @@ AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
-AC_CONFIG_FILES([Makefile])
+# check for pow in libm
+AC_SEARCH_LIBS([pow], [m])
+
+#AC_SEARCH_LIBS([pngWriteHdr], [libdip.a], [], [], [])
+#AC_SEARCH_LIBS([pngReadHdr],  [libdip.a], [], [], [])
+#AC_SEARCH_LIBS([pngWriteRow], [libdip.a], [], [], [])
+#AC_SEARCH_LIBS([pngReadRow],  [libdip.a], [], [], [])
+#AC_SEARCH_LIBS([pngOpen],     [libdip.a], [], [], [])
+#AC_SEARCH_LIBS([pngClose],    [libdip.a], [], [], [])
+
+AC_CONFIG_FILES([Makefile libdip/Makefile src/Makefile])
 
 AC_OUTPUT

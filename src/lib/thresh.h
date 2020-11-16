@@ -11,8 +11,8 @@
 // note: this looks awful. Instead we could just include
 // the .h and .c files and provide path to gcc with -I../libdip/src
 // but alas I am here not doing that.
-#include "../libdip/src/pngio.h"
-#include "../libdip/src/dip.h"
+#include "pngio.h"
+#include "dip.h"
 
 typedef enum {
     UINT8_T,
