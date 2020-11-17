@@ -1,5 +1,5 @@
 # add source code files from bootstrap
-include src_vars.mk
+include $(top_srcdir)/src_vars.mk
 
 #libdip and libhdcr
 noinst_LTLIBRARIES = libdip.la

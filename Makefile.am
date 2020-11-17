@@ -15,7 +15,6 @@ AUTHORS :
 EXTRA_DIST += AUTHORS
 CLEANFILES = AUTHORS
 
-
 # Intentionally empty so INTEGRATION and UNIT tests can append to it.
 check_PROGRAMS =
 check_SCRIPTS =
