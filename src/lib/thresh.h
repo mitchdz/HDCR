@@ -3,7 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "ECE576A.h"
+#include "libhdcr.h"
 
 #include <stdint.h>
 #include <stdio.h>

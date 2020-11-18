@@ -1,7 +1,7 @@
 #ifndef HW5_H
 #define HW5_H
 
-#include "ECE576A.h"
+#include "hdcr.h"
 #include <stdbool.h>
 
 void printECE576AHW5Help();

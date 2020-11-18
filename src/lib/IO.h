@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "dip.h"
 #include "pngio.h"
-#include "ECE576A.h"
+#include "libhdcr.h"
 
 /* @brief writePNG writes a png to a file
  * @param raw_data uint8_t pseudo 2-D array created by matalloc

@@ -2,7 +2,7 @@
 #define HW5_HOSEN_KOPELMANMCC_H
 
 #include <stdbool.h>
-#include "ECE576A.h"
+#include "libhdcr.h"
 #include "thresh.h"
 
 typedef struct labelnode {

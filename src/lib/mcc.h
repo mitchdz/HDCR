@@ -1,7 +1,7 @@
 #ifndef MCC_H
 #define MCC_H
 
-#include "ECE576A.h"
+#include "libhdcr.h"
 #include <stdint.h>
 #include <stdbool.h>
 
