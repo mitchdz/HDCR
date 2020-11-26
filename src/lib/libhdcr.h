@@ -11,4 +11,18 @@ typedef struct IMAGE {
     uint8_t **raw_bits;
 } IMAGE;
 
+
+enum _hdcr_error
+{
+    E_hdcr_SUCCESS,
+    E_hdcr_FILE_NOT_FOUND,
+    E_hdcr_GENERIC_ERROR,
+    E_hdcr_ARRAY_SIZE_MISMATCH,
+    E_hdcr_NOT_IMPLEMENTED,
+    E_hdcr_RECURSIVE_FIRST_LAST_NOT_FOUND
+};
+typedef enum _hdcr_error error_hdcr_t;
+
+void printError(error_hdcr_t E, char *msg);
+
 #endif // ECE576A_H

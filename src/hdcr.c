@@ -3,81 +3,84 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "hdcr.h"
 #include "thresh.h"
-#include "mcc.h"
 #include "IO.h"
-#include "Hoshen-Kopelmanmcc.h"
 
-error_ECE576A_t hdcr_run_program();
 
-void printECE576AHW5Help()
+void printWelcomeMessage(char* input, char* output)
 {
-    printf("USAGE\n");
-    printf("the following flags can be enabled:\n");
-    printf("\t-i <filename>\n");
-    printf("\t\t<filename> is the name of the input file\n");
-    printf("\t-o <filename>\n");
-    printf("\t\t<filename> is the name of the output file\n");
-    printf("\t-m <value>\n");
-    printf("\t\t<value> MaxOutputValue should be either 0 or 255 where 0 ");
-    printf("would indicate ncomponents\n");
-    printf("\t-c <value>\n");
-    printf("\t\t<value> is either 0 or 1 indicating ComponentGrayLevel\n");
-    printf("\t-v\n");
-    printf("\t\tverbose\n");
+    printf("Hand Drawn Circuit Recognizer\n");
+    printf("\t input: %s\n", input);
+    printf("\t output: %s\n", output);
 }
 
-int main(int argc,char* argv[]) {
-    error_ECE576A_t err = E_ECE576A_GENERIC_ERROR;
-    int MaxOutputValue = 1;
-    int ComponentGrayLevel = 1;
-    bool verbose = false;
-    char inputFile[100];
-    char outputFile[100];
+/*
+ * hdcr steps:
+ * 1) threshold image
+ * 2) find center of each component
+ * 3) determine what each component is
+ * 4) follow the wires to the next component and connect
+ * 5) print the linked list of connected components
+ */
+error_hdcr_t hdcr_run_program(
+    char* inputImageFileName,
+    char* outputImageFilName, 
+    bool adaptiveThreshold,
+    ADAPTIVE_THRESHOLD_TYPE att,
+    uint8_t inputThreshold,
+    uint8_t MOV, //MaxOutputValue
+    uint8_t CGL, // ComponentGrayLevel
+    bool verbose 
+    )
+{
+    //TODO: error detection
 
-    char*ifile;
-    int c;
-    opterr = 0;
-    while ((c = getopt (argc, argv, "ho:i:c:m:v")) != -1)
-         switch (c)
-         {
-            case 'h':
-              printECE576AHW5Help();
-              return 1;
-            case 'm':
-              MaxOutputValue = *optarg;
-              break;
-            case 'o':
-              strcpy(outputFile, (const char *)optarg);
-              break;
-            case 'i':
-              ifile = optarg;
-              strcpy(inputFile, ifile);
-              break;
-             case 'v':
-              verbose = true;
-              break;
-            case 'c':
-              ComponentGrayLevel = atoi(optarg);
-              break;
-            default:
-              abort ();
-         }
+    if (verbose) printWelcomeMessage(inputImageFileName, outputImageFilName);
 
-    if (inputFile == NULL)
-        printError(err, "no input file specified");
 
-    if (inputFile == NULL)
-        printError(err, "no input file specified");
+    error_hdcr_t err;
+    uint8_t threshold = 0;
 
-    err = hdcr_run_program();
+    // read the input file and store it into IMAGE struct
+    IMAGE img; 
+    readPNGandClose(inputImageFileName, &img);
+    
+    if (verbose) {
+        printf("%s is a %dx%d image\n", inputImageFileName, img.n_rows, img.n_cols);
+    }
 
-    return 0;
+    // if no adaptive threshold defined and no input threshold, return error
+    if (!adaptiveThreshold && inputThreshold==0) {
+        err = E_hdcr_GENERIC_ERROR;
+        printError(err, (char*)"no adaptive threshold, and no defined threshold");
+        return err;
+    }
+
+    if (adaptiveThreshold) {
+        adaptiveThresholdWithMethod(&img, att, &threshold);
+    }
+    else {
+        threshold = inputThreshold;
+    }
+
+    // threshold the image
+    threshold2DPseudoArray(img.raw_bits, img.n_rows, img.n_cols, threshold);
+
+    // find number of circuit components
+
+
+    // connect each component
+
+
+
+    return E_hdcr_NOT_IMPLEMENTED;
 }
 
-error_ECE576A_t hdcr_run_program()
+
+
+error_hdcr_t  detectNumberOfCircuitComponents(IMAGE *img)
 {
-    printf("TODO: hdcr_run_program");
-    return E_ECE576A_GENERIC_ERROR;
+    return E_hdcr_NOT_IMPLEMENTED;
 }

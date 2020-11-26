@@ -9,6 +9,37 @@
 
 #define ARRAY_SIZE 256
 
+void AdaptiveThresholdKittler(IMAGE *img, uint8_t *t);
+void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t);
+
+
+void adaptiveThresholdWithMethod(IMAGE *img, ADAPTIVE_THRESHOLD_TYPE att, uint8_t *t)
+{
+    switch (att) {
+        case ADAPTIVE_THRESHOLD_OTSU:
+
+            break;
+        case ADAPTIVE_THRESHOLD_KITTLER:
+            AdaptiveThresholdKittler(img, t);
+            break;
+    }
+    return;
+}
+
+
+void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
+{
+    return;
+}
+
+void AdaptiveThresholdKittler(IMAGE *img, uint8_t *t)
+{
+    uint8_t h[255]; //histogram
+    convert2DPseudoArrayToHistogram(img->raw_bits,img->n_rows,img->n_cols,h);
+    RecursiveUpdateFormula(h, t);
+    return;
+}
+
 void convert2DPseudoArrayToHistogram(uint8_t **grayscale, int32_t n_rows,
         int32_t n_cols, uint8_t *Histogram)
 {
@@ -21,7 +52,7 @@ void convert2DPseudoArrayToHistogram(uint8_t **grayscale, int32_t n_rows,
     return;
 }
 
-void RecursiveUpdateFormula(uint8_t *h, int *threshold, double *Hvalues)
+void RecursiveUpdateFormula(uint8_t *h, uint8_t *threshold)
 {
     double q1prev=0, var1prev=0, mu1prev=0, mu1=0, mu2=0, q1=0, q2=0,
            q2prev=0, var2prev=0, mu2prev=0, var1=0, var2=0, H=0, mu=0;
@@ -38,6 +69,7 @@ void RecursiveUpdateFormula(uint8_t *h, int *threshold, double *Hvalues)
 
     double determinedThreshold = DBL_MAX;
     double minimum = DBL_MAX;
+
 
     // Find index before first-occupied histogram bin
     // note, can not be index 0
@@ -59,9 +91,6 @@ calcArraySize:
 
     if (first == -1 || last == -1)
         return;
-
-    //explicitly zero out Hvalues if not done before
-    for (t = 0; t < 256;t++) Hvalues[t] = 0;
 
     //calculate P vals
     for (t = first; t < last; t++) {
@@ -139,8 +168,6 @@ calcArraySize:
         var2 = var2vals[t];
 
         H = (q1*log(var1)+q2*log(var2))/2-q1*log(q1)-q2*log(q2);
-
-        Hvalues[t] = H;
 
         if (H < minimum) {
             determinedThreshold = t;

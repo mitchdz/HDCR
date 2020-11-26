@@ -15,6 +15,11 @@
 #include "dip.h"
 
 typedef enum {
+    ADAPTIVE_THRESHOLD_OTSU,
+    ADAPTIVE_THRESHOLD_KITTLER,
+} ADAPTIVE_THRESHOLD_TYPE;
+
+typedef enum {
     UINT8_T,
     INT32_T,
 } TYPE;
@@ -49,5 +54,10 @@ void writeHistogramToFile(uint8_t *Histogram, const char *outfile);
 
 void threshold2DPseudoArray(uint8_t** array, int32_t n_rows, int32_t n_cols,
     int32_t t);
+
+void RecursiveUpdateFormula(uint8_t *h, uint8_t *threshold);
+
+
+void adaptiveThresholdWithMethod(IMAGE *img, ADAPTIVE_THRESHOLD_TYPE att, uint8_t *t);
 
 #endif // THRESH_H
