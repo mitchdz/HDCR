@@ -36,46 +36,44 @@ error_hdcr_t hdcr_run_program(
     )
 {
     //TODO: error detection
+    //TODO: check that att is a valid enum
 
     if (verbose) printWelcomeMessage(inputImageFileName, outputImageFilName);
 
-
-    error_hdcr_t err;
+    error_hdcr_t err = E_hdcr_SUCCESS;
     uint8_t threshold = 0;
 
     // read the input file and store it into IMAGE struct
     IMAGE img; 
     readPNGandClose(inputImageFileName, &img);
     
+    // if verbose, print image size
     if (verbose) {
-        printf("%s is a %dx%d image\n", inputImageFileName, img.n_rows, img.n_cols);
-    }
-
-    // if no adaptive threshold defined and no input threshold, return error
-    if (!adaptiveThreshold && inputThreshold==0) {
-        err = E_hdcr_GENERIC_ERROR;
-        printError(err, (char*)"no adaptive threshold, and no defined threshold");
-        return err;
+        printf("%s is a %dx%d grayscale image\n", inputImageFileName, img.n_rows, img.n_cols);
     }
 
     if (adaptiveThreshold) {
+        if (verbose) printf("Using Adaptive Threshold %s...\n", getATTType(att));
         adaptiveThresholdWithMethod(&img, att, &threshold);
+        if (verbose) printf("Done. Determined Threshold: %d\n", threshold);
     }
-    else {
+    else 
         threshold = inputThreshold;
-    }
+
 
     // threshold the image
+    if (verbose) printf("Thresholding %s with a value of %d...\n", inputImageFileName, threshold);
     threshold2DPseudoArray(img.raw_bits, img.n_rows, img.n_cols, threshold);
+    if (verbose) printf("Done.\n");
 
     // find number of circuit components
+    if (verbose) printf("Detecting circuit components...\n");
 
 
     // connect each component
 
 
-
-    return E_hdcr_NOT_IMPLEMENTED;
+    return err;
 }
 
 

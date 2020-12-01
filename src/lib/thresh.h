@@ -1,16 +1,16 @@
 #ifndef THRESH_H
 #define THRESH_H
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "libhdcr.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#define _USE_MATH_DEFINES // for vscode to be happy
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
-// include all of the libdip header and source files
-// note: this looks awful. Instead we could just include
-// the .h and .c files and provide path to gcc with -I../libdip/src
-// but alas I am here not doing that.
+
+#include "libhdcr.h"
 #include "pngio.h"
 #include "dip.h"
 
@@ -23,6 +23,8 @@ typedef enum {
     UINT8_T,
     INT32_T,
 } TYPE;
+
+char *getATTType(ADAPTIVE_THRESHOLD_TYPE att);
 
 /* @brief zeros a psuedo 2D array created by matalloc
  *
@@ -59,5 +61,10 @@ void RecursiveUpdateFormula(uint8_t *h, uint8_t *threshold);
 
 
 void adaptiveThresholdWithMethod(IMAGE *img, ADAPTIVE_THRESHOLD_TYPE att, uint8_t *t);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // THRESH_H

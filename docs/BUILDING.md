@@ -3,6 +3,11 @@
 Instructions for building and configuring hdcr
 
 ## Step 1 - Dependencies
+###opencv2
+on Ubuntu 20.04, install using:
+```bash
+sudo apt install libopencv-dev python3-opencv
+```
 
 
 ## Step 2 - Bootstrapping

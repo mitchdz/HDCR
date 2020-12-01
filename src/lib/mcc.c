@@ -120,6 +120,7 @@ void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
      * this is because l is a pseudo 2D int array, whereas outCCM is a pseudo 2D uint8_t array. int->uint8_t causes an
      * overflow because a lot of the setID value in this sequential method exceed 255. There is a slim chance for an
      * edge case that the overflow perfectly matches another set. */
+
     struct mapNode *mnhead = (struct mapNode*)malloc(sizeof(struct mapNode));
     mnhead->key=0;
     mnhead->val=0;
@@ -135,7 +136,7 @@ void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
             key = l[r][c];
             tmpmn = findMapNode(mnhead, key);
             if (tmpmn == NULL) {
-                pushMapNode(mnhead, key, valcount);
+                pushMapNode(&mnhead, key, valcount);
                 outccM[r][c] = valcount;
                 valcount++;
             }
@@ -148,7 +149,6 @@ void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
     // dynamically allocate an array of the amount of components there are
     int *setCounts = (int *)malloc(sizeof(int)*valcount);
     for (i = 0; i < valcount;i++) setCounts[i] = 0;
-    int numSets = 0;
 
     // determine how many pixels are in each component
     for (r = 1; r < img->n_rows-1; r++) {

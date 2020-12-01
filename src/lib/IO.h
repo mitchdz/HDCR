@@ -1,6 +1,10 @@
 #ifndef IO_H
 #define IO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include "dip.h"
 #include "pngio.h"
@@ -15,4 +19,8 @@ void writePNG(uint8_t** raw_data, char* filename, int n_rows, int n_cols);
 
 void readPNGandClose(char *input_file, IMAGE *img);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif //IO_H

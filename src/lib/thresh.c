@@ -6,18 +6,32 @@
 #include <float.h>
 #include <math.h>
 #include "thresh.h"
+#include "cppthresh.hpp"
 
 #define ARRAY_SIZE 256
 
+/* helper function to easily decode error message */
+struct _threshdesc{
+    int code;
+    char *type;
+} threshdesc[] = {
+    { ADAPTIVE_THRESHOLD_OTSU, (char *)"Otsu" },
+    { ADAPTIVE_THRESHOLD_KITTLER,  (char *)"Kittler" },
+};
+
+char *getATTType(ADAPTIVE_THRESHOLD_TYPE att)
+{
+    return threshdesc[att].type;
+}
+
 void AdaptiveThresholdKittler(IMAGE *img, uint8_t *t);
-void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t);
 
 
 void adaptiveThresholdWithMethod(IMAGE *img, ADAPTIVE_THRESHOLD_TYPE att, uint8_t *t)
 {
     switch (att) {
         case ADAPTIVE_THRESHOLD_OTSU:
-
+            adaptiveThresholdOtsu(img, t);
             break;
         case ADAPTIVE_THRESHOLD_KITTLER:
             AdaptiveThresholdKittler(img, t);
@@ -27,10 +41,6 @@ void adaptiveThresholdWithMethod(IMAGE *img, ADAPTIVE_THRESHOLD_TYPE att, uint8_
 }
 
 
-void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
-{
-    return;
-}
 
 void AdaptiveThresholdKittler(IMAGE *img, uint8_t *t)
 {

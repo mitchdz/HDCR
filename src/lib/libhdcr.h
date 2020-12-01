@@ -1,6 +1,10 @@
 #ifndef ECE576A_H
 #define ECE576A_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -24,5 +28,9 @@ enum _hdcr_error
 typedef enum _hdcr_error error_hdcr_t;
 
 void printError(error_hdcr_t E, char *msg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ECE576A_H
