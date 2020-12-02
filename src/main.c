@@ -25,7 +25,7 @@ void printhdcrHelp()
 
 int main(int argc,char* argv[]) {
     error_hdcr_t err = E_hdcr_GENERIC_ERROR;
-    int MaxOutputValue = 1;
+    int MaxOutputValue = 0;
     int ComponentGrayLevel = 1;
     bool verbose = true;
     char inputFile[100];
@@ -55,7 +55,7 @@ int main(int argc,char* argv[]) {
               }
               break;
             case 't':
-              threshold = *optarg;
+              threshold = atoi(optarg);
               break;
             case 'm':
               MaxOutputValue = *optarg;
@@ -92,7 +92,8 @@ int main(int argc,char* argv[]) {
         threshold, 
         MaxOutputValue, 
         ComponentGrayLevel, 
-        verbose);
+        verbose,
+        (char *) "png");
 
     return 0;
 }

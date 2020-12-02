@@ -13,14 +13,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df7bc70-7f29-4236-a01a-4fae8aae5dd7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/docs/BUILDING.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/BUILDING.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/circuit1_pen.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/circuit1_pencil.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hdcr.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hdcr.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/IO.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/IO.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/libhdcr.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/libhdcr.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/mcc.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/mcc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/mcc.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/mcc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/thresh.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/thresh.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/thresh.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/thresh.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hdcr.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/hdcr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/IO.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/IO.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/cppthresh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/cppthresh.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,11 +71,16 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.bin/hdcr" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="settings.editor.selected.configurable" value="MakefileSettings" />
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+  </component>
   <component name="RunManager">
-    <configuration name="run" type="CLionNativeAppRunConfigurationType" nameIsGenerated="true" PROGRAM_PARAMS="-i demo/circuit1_pen.png -o demo/circuit1_pen_out.png" REDIRECT_INPUT="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="hdcr" TARGET_NAME="run" CONFIG_NAME="run" version="1" RUN_PATH="$PROJECT_DIR$/.bin/hdcr">
+    <configuration name="run" type="CLionNativeAppRunConfigurationType" nameIsGenerated="true" PROGRAM_PARAMS="-i demo/circuit1_pen.png -o demo/circuit1_pen_out" REDIRECT_INPUT="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="hdcr" TARGET_NAME="run" CONFIG_NAME="run" version="1" RUN_PATH="$PROJECT_DIR$/.bin/hdcr">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
@@ -97,7 +101,7 @@
       <updated>1604287256976</updated>
       <workItem from="1604287259232" duration="17000" />
       <workItem from="1606783007042" duration="87000" />
-      <workItem from="1606783104137" duration="1281000" />
+      <workItem from="1606783104137" duration="9506000" />
     </task>
     <servers />
   </component>
@@ -105,10 +109,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1824" y="276" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606783479090">
+    <state x="2035" y="328" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606890086150">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="1824" y="276" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783479090" />
+    <state x="2035" y="328" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890086150" />
     <state x="2047" y="470" width="641" height="397" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606783023977">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -118,38 +122,38 @@
     </state>
     <state x="1469" y="428" width="428" height="482" key="FileChooserDialogImpl/0.0.2560.1440/2560.0.2560.1440@0.0.2560.1440" timestamp="1604287273827" />
     <state x="1970" y="376" width="428" height="482" key="FileChooserDialogImpl/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783476393" />
-    <state width="2077" height="495" key="GridCell.Tab.0.bottom" timestamp="1606783972219">
+    <state width="1664" height="505" key="GridCell.Tab.0.bottom" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.0.bottom/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972219" />
-    <state width="2077" height="495" key="GridCell.Tab.0.center" timestamp="1606783972219">
+    <state width="1664" height="505" key="GridCell.Tab.0.bottom/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.0.center" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.0.center/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972219" />
-    <state width="2077" height="495" key="GridCell.Tab.0.left" timestamp="1606783972219">
+    <state width="1664" height="505" key="GridCell.Tab.0.center/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.0.left" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.0.left/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972219" />
-    <state width="2077" height="495" key="GridCell.Tab.0.right" timestamp="1606783972219">
+    <state width="1664" height="505" key="GridCell.Tab.0.left/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.0.right" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.0.right/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972219" />
-    <state width="2077" height="495" key="GridCell.Tab.1.bottom" timestamp="1606783972455">
+    <state width="1664" height="505" key="GridCell.Tab.0.right/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.1.bottom" timestamp="1606890389931">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.1.bottom/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972455" />
-    <state width="2077" height="495" key="GridCell.Tab.1.center" timestamp="1606783972455">
+    <state width="1664" height="505" key="GridCell.Tab.1.bottom/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389931" />
+    <state width="1664" height="505" key="GridCell.Tab.1.center" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.1.center/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972455" />
-    <state width="2077" height="495" key="GridCell.Tab.1.left" timestamp="1606783972455">
+    <state width="1664" height="505" key="GridCell.Tab.1.center/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.1.left" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.1.left/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972455" />
-    <state width="2077" height="495" key="GridCell.Tab.1.right" timestamp="1606783972455">
+    <state width="1664" height="505" key="GridCell.Tab.1.left/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
+    <state width="1664" height="505" key="GridCell.Tab.1.right" timestamp="1606890389930">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state width="2077" height="495" key="GridCell.Tab.1.right/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606783972455" />
+    <state width="1664" height="505" key="GridCell.Tab.1.right/0.0.3440.1440/3440.0.3440.1440@0.0.3440.1440" timestamp="1606890389930" />
     <state x="1857" y="279" key="SettingsEditor" timestamp="1606783278985">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -165,10 +169,15 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/lib/cppthresh.cpp</url>
-          <line>23</line>
-          <option name="timeStamp" value="6" />
+          <line>36</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CLionNativeAppRunConfigurationType">
+        <watch expression="threshold_value" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

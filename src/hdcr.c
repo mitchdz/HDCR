@@ -8,6 +8,15 @@
 #include "thresh.h"
 #include "IO.h"
 
+char *concat3Strings(char* str1, char* str2, char* str3)
+{
+    char * qq = (char*) malloc((strlen(str1)+strlen(str2)+strlen(str3))*sizeof(char));
+    strcpy(qq, str1);
+    strcat(qq, str2);
+    strcat(qq, str3);
+
+    return qq;
+}
 
 void printWelcomeMessage(char* input, char* output)
 {
@@ -26,24 +35,26 @@ void printWelcomeMessage(char* input, char* output)
  */
 error_hdcr_t hdcr_run_program(
     char* inputImageFileName,
-    char* outputImageFilName, 
+    char* outputImageFileName,
     bool adaptiveThreshold,
     ADAPTIVE_THRESHOLD_TYPE att,
     uint8_t inputThreshold,
     uint8_t MOV, //MaxOutputValue
     uint8_t CGL, // ComponentGrayLevel
-    bool verbose 
+    bool verbose,
+    char* imgType
     )
 {
     //TODO: error detection
     //TODO: check that att is a valid enum
 
-    if (verbose) printWelcomeMessage(inputImageFileName, outputImageFilName);
+    if (verbose) printWelcomeMessage(inputImageFileName, outputImageFileName);
 
     error_hdcr_t err = E_hdcr_SUCCESS;
     uint8_t threshold = 0;
 
-    // read the input file and store it into IMAGE struct
+    /*** read the input file and store it into IMAGE struct ***/
+
     IMAGE img; 
     readPNGandClose(inputImageFileName, &img);
     
@@ -57,18 +68,40 @@ error_hdcr_t hdcr_run_program(
         adaptiveThresholdWithMethod(&img, att, &threshold);
         if (verbose) printf("Done. Determined Threshold: %d\n", threshold);
     }
-    else 
+    else {
         threshold = inputThreshold;
+    }
 
+    /*** threshold the image ***/
 
-    // threshold the image
     if (verbose) printf("Thresholding %s with a value of %d...\n", inputImageFileName, threshold);
     threshold2DPseudoArray(img.raw_bits, img.n_rows, img.n_cols, threshold);
+    if (verbose) printf("Done.\n");
+
+    char *outname = concat3Strings(outputImageFileName, "_thresh.", imgType);
+    if (verbose) printf("Printing thresholded image to %s ...\n", outname);
+    writePNG(img.raw_bits, (char*)outname, img.n_rows, img.n_cols);
     if (verbose) printf("Done.\n");
 
     // find number of circuit components
     if (verbose) printf("Detecting circuit components...\n");
 
+
+
+
+
+
+
+    /* connected components */
+    /*
+    uint8_t **outCCM = matalloc(img.n_rows, img.n_cols, 0, 0, sizeof(uint8_t));
+    int numComponents;
+    iterativeCCL(&img, outCCM, CGL, &numComponents, false);
+
+    if (verbose) printf("Detected 4 distinct components");
+    char *outComponentFileName = concat3Strings(outputImageFileName, "_components.", imgType);
+    writePNG(outCCM, outComponentFileName, img.n_rows, img.n_cols);
+    */
 
     // connect each component
 

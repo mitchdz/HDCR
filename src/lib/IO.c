@@ -22,8 +22,7 @@ void readPNGandClose(char *input_file, IMAGE *img)
     img->n_rows = nRows;
     img->n_cols = nCols;
 
-    uint8_t **raw_bits = matalloc(img->n_rows, img->n_cols, 0, 0, 
-        sizeof(uint8_t));
+    uint8_t **raw_bits = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
 
     img->raw_bits = raw_bits;
 

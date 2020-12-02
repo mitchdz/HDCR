@@ -1,4 +1,6 @@
 #include "opencv2/highgui.hpp"
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
 #include <limits.h>
 #include <iostream>
 #include <vector>
@@ -9,55 +11,30 @@
 using namespace std;
 using namespace cv;
 
+
+Mat convertIMAGEtoMat(IMAGE *img)
+{
+    Mat temp = Mat(img->n_rows, img->n_cols, CV_8U);
+    for (int r=0; r<img->n_rows; r++) {
+        for (int c=0; c<img->n_cols; c++) {
+            temp.row(r).col(c) = img->raw_bits[r][c];
+        }
+    }
+    return temp;
+}
+
 //int otsu_method(float *histogram, long int total_pixels) {
 void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
 {
-    long int total_pixels = img->n_rows*img->n_cols;
-    uint8_t raw_histogram[256];
-    convert2DPseudoArrayToHistogram(img->raw_bits, img->n_rows,img->n_cols, raw_histogram);
+    Mat inputMat = convertIMAGEtoMat(img);
+    Mat outputMat = convertIMAGEtoMat(img);
 
-    
-
-
-    float histogram[256];
-    for (int i = 0; i < 256; i++) {
-        histogram[i] = (float)raw_histogram[i]/(float)total_pixels;
-    }
-
-    double probability[256], mean[256];
-    double max_between, between[256];
-    int threshold;
-
-    for(int i = 0; i < 256; i++) {
-        probability[i] = 0.0;
-        mean[i] = 0.0;
-        between[i] = 0.0;
-    }
-
-    probability[0] = histogram[0];
-    for(int i = 1; i < 256; i++) {
-        probability[i] = probability[i - 1] + histogram[i];
-        mean[i] = mean[i - 1] + i * histogram[i];
-    }
-
-    threshold = 0;
-    max_between = 0.0;
-
-    for(int i = 0; i < 255; i++) {
-        if(probability[i] != 0.0 && probability[i] != 1.0)
-            between[i] = pow(mean[255] * probability[i] - mean[i], 2) / (probability[i] * (1.0 - probability[i]));
-        else
-            between[i] = 0.0;
-        if(between[i] > max_between) {
-            max_between = between[i];
-            threshold = i;
-        }
-    }
-
-    *t = threshold;
-
-    return;
+    int threshold_value;
+    threshold_value = threshold(_InputArray(inputMat), _OutputArray(outputMat), 0.0, 255.0, CV_THRESH_BINARY | CV_THRESH_OTSU);
+    printf("thresh: %d\n", threshold_value);
+    *t = threshold_value;
 }
+
 
 /*
 void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
