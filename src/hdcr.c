@@ -7,6 +7,7 @@
 #include "hdcr.h"
 #include "thresh.h"
 #include "IO.h"
+#include "morph.h"
 
 char *concat3Strings(char* str1, char* str2, char* str3)
 {
@@ -83,27 +84,35 @@ error_hdcr_t hdcr_run_program(
     writePNG(img.raw_bits, (char*)outname, img.n_rows, img.n_cols);
     if (verbose) printf("Done.\n");
 
-    // find number of circuit components
-    if (verbose) printf("Detecting circuit components...\n");
 
+    /******** thicken **********/
+    int numThickening = 3;
+    if (verbose) printf("Thickening %d times...\n", numThickening);
+    thickenImage(&img, numThickening);
+    if (verbose) printf("Done\n");
 
+    /******** dilate **********/
+    if (verbose) printf("dilating with a 3x3 kernel...\n");
+    dilateImage3by3Kernel(&img);
+    if (verbose) printf("Done\n");
 
+    /********* remove branchpoints ********/
+    if (verbose) printf("Removing branchpoints...\n");
+    removeBranchPoints(&img);
+    if (verbose) printf("Done\n");
 
+    /********* Find centroids & bounding box ********/
+    if (verbose) printf("Finding Centroids and bounding box...\n");
+    // TODO: implement
+    
+    /********* Merge Centroid Clusters ********/
+    // TODO: implement
 
+    /********* SSIM to classify image ********/
+    // TODO: implement
 
-
-    /* connected components */
-    /*
-    uint8_t **outCCM = matalloc(img.n_rows, img.n_cols, 0, 0, sizeof(uint8_t));
-    int numComponents;
-    iterativeCCL(&img, outCCM, CGL, &numComponents, false);
-
-    if (verbose) printf("Detected 4 distinct components");
-    char *outComponentFileName = concat3Strings(outputImageFileName, "_components.", imgType);
-    writePNG(outCCM, outComponentFileName, img.n_rows, img.n_cols);
-    */
-
-    // connect each component
+    /********* merge cluster bounding boxes with branchpoints & connect *******/
+    // TODO: implement
 
 
     return err;
