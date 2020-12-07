@@ -31,7 +31,6 @@ void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
 
     int threshold_value;
     threshold_value = threshold(_InputArray(inputMat), _OutputArray(outputMat), 0.0, 255.0, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    printf("thresh: %d\n", threshold_value);
     *t = threshold_value;
 }
 

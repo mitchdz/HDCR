@@ -26,8 +26,9 @@ void printhdcrHelp()
 int main(int argc,char* argv[]) {
     error_hdcr_t err = E_hdcr_GENERIC_ERROR;
     int MaxOutputValue = 0;
-    int ComponentGrayLevel = 1;
+    int ComponentGrayLevel = 0; // 0 means black
     bool verbose = true;
+    bool write = false;
     char inputFile[100];
     char outputFile[100];
     uint8_t threshold = 0;
@@ -37,7 +38,7 @@ int main(int argc,char* argv[]) {
     char*ifile;
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:")) != -1)
+    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:wD")) != -1)
          switch (c)
          {
             case 'h':
@@ -73,6 +74,13 @@ int main(int argc,char* argv[]) {
             case 'c':
               ComponentGrayLevel = atoi(optarg);
               break;
+            case 'w':
+              write=true;
+              break;
+            case 'D':
+              verbose=true;
+              write=true;
+              break;
             default:
               abort ();
          }
@@ -93,6 +101,7 @@ int main(int argc,char* argv[]) {
         MaxOutputValue, 
         ComponentGrayLevel, 
         verbose,
+        write,
         (char *) "png");
 
     return 0;

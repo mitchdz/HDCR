@@ -26,6 +26,35 @@ void printWelcomeMessage(char* input, char* output)
     printf("\t output: %s\n", output);
 }
 
+void __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
+{
+    if (verbose) printf("Thresholding...\n");
+    threshold2DPseudoArray(img->raw_bits, img->n_rows, img->n_cols, threshold);
+    if (write) writePNG(img, (char *)"demo/Circuit2-1_thresh.png");
+    if (verbose) printf("\tDone.\n");
+}
+
+
+void __thicken(IMAGE *img, uint8_t CGL, bool verbose, bool write)
+{
+    int numThickening = 3;
+    if (verbose) printf("Thickening %d time(s)...\n", numThickening);
+    thickenImage(img, numThickening, CGL);
+    if (verbose) printf("\tDone\n");
+
+    if (write) writePNG(img, (char *)"demo/Circuit2-1_thicken.png");
+}
+
+void __dilate(IMAGE* img, uint8_t CGL, bool verbose, bool write)
+{
+    if (verbose) printf("dilating with a 3x3 kernel...\n");
+    dilateImage3by3Kernel(img, CGL);
+    if (verbose) printf("\tDone\n");
+    if (write) writePNG(img, (char *)"demo/Circuit2-1_Dilation.png");
+}
+
+
+
 /*
  * hdcr steps:
  * 1) threshold image
@@ -43,6 +72,7 @@ error_hdcr_t hdcr_run_program(
     uint8_t MOV, //MaxOutputValue
     uint8_t CGL, // ComponentGrayLevel
     bool verbose,
+    bool write,
     char* imgType
     )
 {
@@ -55,9 +85,10 @@ error_hdcr_t hdcr_run_program(
     uint8_t threshold = 0;
 
     /*** read the input file and store it into IMAGE struct ***/
-
     IMAGE img; 
     readPNGandClose(inputImageFileName, &img);
+
+    writePNG(&img, outputImageFileName);
     
     // if verbose, print image size
     if (verbose) {
@@ -67,39 +98,26 @@ error_hdcr_t hdcr_run_program(
     if (adaptiveThreshold) {
         if (verbose) printf("Using Adaptive Threshold %s...\n", getATTType(att));
         adaptiveThresholdWithMethod(&img, att, &threshold);
-        if (verbose) printf("Done. Determined Threshold: %d\n", threshold);
+        if (verbose) printf("\tDone.\n\tDetermined Threshold: %d\n", threshold);
     }
     else {
         threshold = inputThreshold;
     }
 
-    /*** threshold the image ***/
-
-    if (verbose) printf("Thresholding %s with a value of %d...\n", inputImageFileName, threshold);
-    threshold2DPseudoArray(img.raw_bits, img.n_rows, img.n_cols, threshold);
-    if (verbose) printf("Done.\n");
-
-    char *outname = concat3Strings(outputImageFileName, "_thresh.", imgType);
-    if (verbose) printf("Printing thresholded image to %s ...\n", outname);
-    writePNG(img.raw_bits, (char*)outname, img.n_rows, img.n_cols);
-    if (verbose) printf("Done.\n");
-
+    /******** threshold **********/
+    __threshold(&img, threshold, verbose, write);
 
     /******** thicken **********/
-    int numThickening = 3;
-    if (verbose) printf("Thickening %d times...\n", numThickening);
-    thickenImage(&img, numThickening);
-    if (verbose) printf("Done\n");
+    __thicken(&img, CGL, verbose, write);
 
     /******** dilate **********/
-    if (verbose) printf("dilating with a 3x3 kernel...\n");
-    dilateImage3by3Kernel(&img);
-    if (verbose) printf("Done\n");
+    __dilate(&img, CGL, verbose, write);
 
-    /********* remove branchpoints ********/
-    if (verbose) printf("Removing branchpoints...\n");
-    removeBranchPoints(&img);
-    if (verbose) printf("Done\n");
+    ///********* remove branchpoints ********/
+    //if (verbose) printf("Removing branchpoints...\n");
+    //removeBranchPoints(&img);
+    //if (verbose) printf("\tDone\n");
+
 
     /********* Find centroids & bounding box ********/
     if (verbose) printf("Finding Centroids and bounding box...\n");
@@ -117,8 +135,6 @@ error_hdcr_t hdcr_run_program(
 
     return err;
 }
-
-
 
 error_hdcr_t  detectNumberOfCircuitComponents(IMAGE *img)
 {

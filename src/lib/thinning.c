@@ -4,10 +4,13 @@
 int __numberForegroundPixelNeighbors(IMAGE *img, int r, int c, uint8_t CFGval)
 {
     int sum = 0;
-    for (int i = r -1; r <= r+1; i++)
-        for (int j = c -1; j <= c+1; j++)
-            if (i != r || j != c)
-                if (img->raw_bits[r][c] == CFGval) sum++;
+    for (int i = r-1; i <= r+1; i++) {
+        for (int j = c -1; j <= c+1; j++) {
+            if (i != r || j != c) {
+                if (img->raw_bits[i][j] == CFGval) sum++;
+            }
+        }
+    }
     return sum;
 }
 
@@ -76,12 +79,15 @@ int __ZSTest2(IMAGE *img, int r, int c, uint8_t CFGval)
     uint8_t S = img->raw_bits[r+1][c];
     uint8_t W = img->raw_bits[r][c-1];
 
-    return ((numNeighbors >=2 && numNeighbors<=6)) 
-            && (__BWTransitions(img, r, c, CFGval)==1)
-            && (N==CFGval || E==CFGval || W==CFGval)
-            && (N==CFGval || S==CFGval || W==CFGval);
-}
+    int bwTransitions = __BWTransitions(img, r, c, CFGval);
 
+    int result = ((numNeighbors >=2 && numNeighbors<=6)
+              && (bwTransitions==1)
+              && (N==CFGval || E==CFGval || W==CFGval)
+              && (N==CFGval || S==CFGval || W==CFGval));
+
+    return result;
+}
 /* Zhang-Suen Thinning Algorithm
  *  CFGval = value of forgeound component either 0 or 255
  * 
@@ -103,7 +109,7 @@ void ZhangSuenThinning(IMAGE *img, uint8_t CFGval)
         for (c=1; c<img->n_cols-1; c++) {
             if (img->raw_bits[r][c] != CFGval) continue;
 
-            if (__ZSTest1(img, r, c, CFGval)) {
+            if (__ZSTest1(img, r, c, CFGval)==1) {
                 markers[r][c] = 1;
             }
         }
@@ -113,7 +119,7 @@ void ZhangSuenThinning(IMAGE *img, uint8_t CFGval)
         for (c=1; c<img->n_cols-1; c++) {                
             if (img->raw_bits[r][c] != CFGval) continue;
 
-            if (__ZSTest2(img, r, c, CFGval)) {
+            if (__ZSTest2(img, r, c, CFGval)==1) {
                 markers[r][c] = 1;
             }
         }

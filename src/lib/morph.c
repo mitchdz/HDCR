@@ -3,12 +3,12 @@
 
 
 /* inverts image's pixels */
-void __invertImage(IMAGE *img)
+void invertImage(IMAGE *img)
 {
     for (int r = 0; r < img->n_rows;r++) {
         for (int c =0; c < img->n_cols;c++) {
             if (img->raw_bits[r][c] == 0)
-                img->raw_bits[r][c] = 1;
+                img->raw_bits[r][c] = 255;
             else
                 img->raw_bits[r][c] = 0;
         }
@@ -16,11 +16,11 @@ void __invertImage(IMAGE *img)
 }
 
 /* performed as the thinning of the negated image */
-void __thickenImage(IMAGE *img) 
+void __thickenImage(IMAGE *img, uint8_t CFGval) 
 {
-    __invertImage(img);
-    ZhangSuenThinning(img);
-    __invertImage(img);
+    invertImage(img);
+    ZhangSuenThinning(img, CFGval);
+    invertImage(img);
 }
 
 /* Performs the thickening operation on an image n times
@@ -28,10 +28,10 @@ void __thickenImage(IMAGE *img)
  * thickening adds pixels to the exterior of objects.
  * 
  */
-void thickenImage(IMAGE *img, int n)
+void thickenImage(IMAGE *img, int n, uint8_t CFGval)
 {
     for (int i = 0; i < n; i++) {
-        __thickenImage(img);
+        __thickenImage(img, CFGval);
     }
 }
 
@@ -49,9 +49,30 @@ void thickenImage(IMAGE *img, int n)
 //                img->raw_bits[r][c] = 0;
 //}
 
-void dilateImage3by3Kernel(IMAGE *img)
+void dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 {
-    uint8_t kernel[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
+    int r,c;
+    //uint8_t kernel[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
+
+    uint8_t temp;
+    //dummy img
+    uint8_t **dummy = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
+    for (r=0; r<img->n_rows; r++) {
+        for(c=0; c<img->n_cols; c++) {
+            temp = img->raw_bits[r][c];
+            dummy[r][c] = temp;
+        }
+    }
+
+    for (r=0; r<img->n_rows; r++) {
+        for(c=0; c<img->n_cols; c++) {
+            if (dummy[r][c] == CFGval) {
+
+            }
+        }
+    }
+
+
 
     // TODO: implement
 }

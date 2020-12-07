@@ -1,15 +1,17 @@
 #include "IO.h"
+#include "libhdcr.h"
 
 /* @brief writePNG writes a png to a file
  * @param raw_data uint8_t pseudo 2-D array created by matalloc
  * @param n_rows number of rows of the pseudo 2D array
  * @param n_cols number of columns of the pseudo 2D array
  */
-void writePNG(uint8_t** raw_data, char* filename, int n_rows, int n_cols)
+void writePNG(IMAGE *img, char* filename)
 {
     PNGFILE *output_png = pngOpen(filename, (char *)"w");
-    pngWriteHdr(output_png, n_rows, n_cols);
-    for (int r = 0; r < n_rows; r++) pngWriteRow(output_png, raw_data[r]);
+    pngWriteHdr(output_png, img->n_rows, img->n_cols);
+    for (int r = 0; r < img->n_rows; r++) 
+        pngWriteRow(output_png, img->raw_bits[r]);
     free(output_png);
 }
 
