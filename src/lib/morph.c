@@ -1,5 +1,6 @@
 #include "libhdcr.h"
 #include "thinning.h"
+#include "dip.h"
 
 
 /* inverts image's pixels */
@@ -52,32 +53,24 @@ void thickenImage(IMAGE *img, int n, uint8_t CFGval)
 void dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 {
     int r,c;
-    //uint8_t kernel[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
 
-    uint8_t temp;
-    //dummy img
-    uint8_t **dummy = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
-    for (r=0; r<img->n_rows; r++) {
-        for(c=0; c<img->n_cols; c++) {
-            temp = img->raw_bits[r][c];
-            dummy[r][c] = temp;
-        }
-    }
+    uint8_t **markers = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
+    for (r=0; r<img->n_rows; r++)
+        for (c=0; c<img->n_cols;c++)
+            markers[r][c] = img->raw_bits[r][c];
 
-    for (r=0; r<img->n_rows; r++) {
-        for(c=0; c<img->n_cols; c++) {
-            if (dummy[r][c] == CFGval) {
-
+    for (r=1; r<img->n_rows-1; r++) {
+        for(c=1; c<img->n_cols-1; c++) {
+            if (markers[r][c] == CFGval) {
+                img->raw_bits[r-1][c] = CFGval;
+                img->raw_bits[r-1][c+1] = CFGval;
+                img->raw_bits[r-1][c-1] = CFGval;
+                img->raw_bits[r][c-1] = CFGval;
+                img->raw_bits[r][c+1] = CFGval;
+                img->raw_bits[r+1][c] = CFGval;
+                img->raw_bits[r+1][c+1] = CFGval;
+                img->raw_bits[r+1][c-1] = CFGval;
             }
         }
     }
-
-
-
-    // TODO: implement
-}
-
-void removeBranchPoints(IMAGE *img)
-{
-    //TODO: implement
 }

@@ -26,6 +26,15 @@ void printWelcomeMessage(char* input, char* output)
     printf("\t output: %s\n", output);
 }
 
+
+
+void __removeBranchpoints(IMAGE *img, uint8_t CGL, bool verbose, bool write)
+{
+    if (verbose) printf("Removing branchpoints...\n");
+    removeBranchPoints(&img);
+    if (verbose) printf("\tDone\n");
+}
+
 void __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
 {
     if (verbose) printf("Thresholding...\n");
@@ -113,10 +122,8 @@ error_hdcr_t hdcr_run_program(
     /******** dilate **********/
     __dilate(&img, CGL, verbose, write);
 
-    ///********* remove branchpoints ********/
-    //if (verbose) printf("Removing branchpoints...\n");
-    //removeBranchPoints(&img);
-    //if (verbose) printf("\tDone\n");
+    /********* remove branchpoints ********/
+    __removeBranchpoints(&img, CGL, verbose, write);
 
 
     /********* Find centroids & bounding box ********/
