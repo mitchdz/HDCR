@@ -7,21 +7,11 @@
 #include <bitset>
 #include "cppthresh.hpp"
 #include "thresh.h"
+#include "cppOpenCV2Helper.hpp"
+
 
 using namespace std;
 using namespace cv;
-
-
-Mat convertIMAGEtoMat(IMAGE *img)
-{
-    Mat temp = Mat(img->n_rows, img->n_cols, CV_8U);
-    for (int r=0; r<img->n_rows; r++) {
-        for (int c=0; c<img->n_cols; c++) {
-            temp.row(r).col(c) = img->raw_bits[r][c];
-        }
-    }
-    return temp;
-}
 
 //int otsu_method(float *histogram, long int total_pixels) {
 void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)

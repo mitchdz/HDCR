@@ -26,13 +26,21 @@ void printWelcomeMessage(char* input, char* output)
     printf("\t output: %s\n", output);
 }
 
+void __skeletonize(IMAGE *img, uint8_t CGL, bool verbose, bool write)
+{
+    if (verbose) printf("Skeletonizing Image...\n");
+    skeletizeImage(img, CGL);
+    if (verbose) printf("\tDone\n");
+    if (write) writePNG(img, (char *)"demo/Circuit2-1_skeletonize.png");
+}
 
 
 void __removeBranchpoints(IMAGE *img, uint8_t CGL, bool verbose, bool write)
 {
     if (verbose) printf("Removing branchpoints...\n");
-    removeBranchPoints(&img);
+    removeBranchPoints(img, CGL);
     if (verbose) printf("\tDone\n");
+    if (write) writePNG(img, (char *)"demo/Circuit2-1_branchpoint.png");
 }
 
 void __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
@@ -122,12 +130,19 @@ error_hdcr_t hdcr_run_program(
     /******** dilate **********/
     __dilate(&img, CGL, verbose, write);
 
+    /******** skeletonize **********/
+    __skeletonize(&img, CGL, verbose, write);
+
+
     /********* remove branchpoints ********/
-    __removeBranchpoints(&img, CGL, verbose, write);
+    //__removeBranchpoints(&img, CGL, verbose, write);
+
+
+
 
 
     /********* Find centroids & bounding box ********/
-    if (verbose) printf("Finding Centroids and bounding box...\n");
+    //if (verbose) printf("Finding Centroids and bounding box...\n");
     // TODO: implement
     
     /********* Merge Centroid Clusters ********/

@@ -28,6 +28,7 @@ enum _hdcr_error
 typedef enum _hdcr_error error_hdcr_t;
 
 void printError(error_hdcr_t E, char *msg);
+//void duplicateImage(IMAGE *img, IMAGE *target);
 
 #ifdef __cplusplus
 }

@@ -2,7 +2,7 @@
 
 
 
-int SSIM(IMAGE *src, IAMGE *tgt)
+int SSIM(IMAGE *src, IMAGE *tgt)
 {
 
 
