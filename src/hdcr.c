@@ -10,7 +10,7 @@
 #include "morph.h"
 #include "thinning.h"
 
-void run_benchmarks(IMAGE *img, char* imageName);
+void run_benchmarks(char* imageName, uint8_t CGL);
 
 char *concat3Strings(char* str1, char* str2, char* str3)
 {
@@ -105,6 +105,13 @@ error_hdcr_t hdcr_run_program(
     bool benchmark
     )
 {
+    // if benchmark flag is enabled, run benchmarks
+    if (benchmark) {
+        printf("Benchmarking flag enabled...\n");
+        run_benchmarks(inputImageFileName, CGL);
+        return E_hdcr_SUCCESS;
+    }
+
     //TODO: error detection
     //TODO: check that att is a valid enum
 
@@ -126,11 +133,6 @@ error_hdcr_t hdcr_run_program(
     CCImage.n_rows = img.n_rows;
     CCImage.raw_bits = CCImage_raw_bits;
 
-    // if benchmark flag is enabled, run benchmarks
-    if (benchmark) {
-        run_benchmarks(&img, inputImageFileName);
-        goto cleanup;
-    }
 
     /* find adaptive threshold */
     if (verbose) {
@@ -218,12 +220,17 @@ cleanup:
     return err;
 } // end of hdcr_run_program
 
-void run_benchmarks(IMAGE *img, char* imageName)
+void run_benchmarks(char* imageName, uint8_t CGL)
 {
+    IMAGE test;
+    readPNGandClose(imageName, &test);
     printf("Timing benchmarks for libhdcr using %s\n", imageName);
 
     /* erosion */
-
+    printf("erodeImage3by3Kernel, ")
+    
+    
+    erodeImage3by3Kernel(&test, CGL);
 
 
 

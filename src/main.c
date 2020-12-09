@@ -53,7 +53,7 @@ int main(int argc,char* argv[]) {
     char*ifile;
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:wDb:")) != -1)
+    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:wDb")) != -1)
          switch (c)
          {
             case 'h':
@@ -61,8 +61,7 @@ int main(int argc,char* argv[]) {
               return 1;
             case 'b':
               benchmark = true;
-              return 1;
-            
+              break;
             case 'a':
               if ( !strcmp((const char*)"otsu", optarg) ){
                 att = ADAPTIVE_THRESHOLD_OTSU;
