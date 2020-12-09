@@ -31,12 +31,11 @@ void printhdcrHelp()
     printf("\t\t(optional) threshold, value between 0 and 255\n");
     printf("\t-v\n");
     printf("\t\tverbose\n");
+    printf("\t-b\n");
+    printf("\t\tbenchmark, forego the actual project, and just benchmark library functions\n");
     printf("\t-h\n");
     printf("\t\tprint help menu\n");
 }
-
-
-
 
 int main(int argc,char* argv[]) {
     error_hdcr_t err = E_hdcr_GENERIC_ERROR;
@@ -49,16 +48,21 @@ int main(int argc,char* argv[]) {
     uint8_t threshold = 0;
     ADAPTIVE_THRESHOLD_TYPE att = ADAPTIVE_THRESHOLD_OTSU;
     bool attdo = true;
+    bool benchmark = false;
 
     char*ifile;
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:wD")) != -1)
+    while ((c = getopt (argc, argv, "ho:i:c:m:st:a:wDb:")) != -1)
          switch (c)
          {
             case 'h':
               printhdcrHelp();
               return 1;
+            case 'b':
+              benchmark = true;
+              return 1;
+            
             case 'a':
               if ( !strcmp((const char*)"otsu", optarg) ){
                 att = ADAPTIVE_THRESHOLD_OTSU;
@@ -117,7 +121,8 @@ int main(int argc,char* argv[]) {
         ComponentGrayLevel, 
         verbose,
         write,
-        (char *) "png");
+        (char *) "png",
+        benchmark);
 
     return 0;
 }

@@ -4,9 +4,16 @@
 #include "dip.h"
 
 
-/* inverts image's pixels */
-void invertImage(IMAGE *img)
+error_hdcr_t invertImage(IMAGE *img)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+
     for (int r = 0; r < img->n_rows;r++) {
         for (int c =0; c < img->n_cols;c++) {
             if (img->raw_bits[r][c] == 0)
@@ -15,6 +22,7 @@ void invertImage(IMAGE *img)
                 img->raw_bits[r][c] = 0;
         }
     }
+    return E_hdcr_SUCCESS;
 }
 
 /* performed as the thinning of the negated image */
@@ -30,11 +38,20 @@ void __thickenImage(IMAGE *img, uint8_t CFGval)
  * thickening adds pixels to the exterior of objects.
  * 
  */
-void thickenImage(IMAGE *img, int n, uint8_t CFGval)
+error_hdcr_t thickenImage(IMAGE *img, int n, uint8_t CFGval)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+
     for (int i = 0; i < n; i++) {
         __thickenImage(img, CFGval);
     }
+    return E_hdcr_SUCCESS;
 }
 
 /* removes spurious pixels. For example:
@@ -43,16 +60,35 @@ void thickenImage(IMAGE *img, int n, uint8_t CFGval)
  *   0 0 0 
  *  the one will be removed.
  */
-//void cleanSpuriousPixels(IMAGE *img)
+//error_hdcr_t cleanSpuriousPixels(IMAGE *img, uint8_t CFGval)
 //{
+//    // basic error checking
+//    if (img->n_rows == 0 
+//        || img->n_cols == 0
+//        || img->raw_bits == NULL) 
+//    {            
+//        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+//    }
+//
 //    for (int r = 1; r < img->n_rows-1; r++)
 //        for (int c = 1; c < img->n_cols-1; c++) 
 //            if (numberZeroPixelNeighbors(img, r, c) == 0)
 //                img->raw_bits[r][c] = 0;
+//    return E_hdcr_SUCCESS;
 //}
 
-void dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
+
+
+error_hdcr_t dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+
     int r,c;
 
     uint8_t **markers = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
@@ -60,6 +96,7 @@ void dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
         for (c=0; c<img->n_cols;c++)
             markers[r][c] = img->raw_bits[r][c];
 
+    // hardcoded true(3) kernel
     for (r=1; r<img->n_rows-1; r++) {
         for(c=1; c<img->n_cols-1; c++) {
             if (markers[r][c] == CFGval) {
@@ -74,16 +111,30 @@ void dilateImage3by3Kernel(IMAGE *img, uint8_t CFGval)
             }
         }
     }
-
+    return E_hdcr_SUCCESS;
 }
+
+
+
+
+
+
 
 /* erosion with 3x3 kernel:
  *          1 1 1
  *          1 1 1
  *          1 1 1
  */
-erodeImage3by3Kernel(IMAGE *img, uint8_t CFGval)
+error_hdcr_t erodeImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+    
     int r,c;
 
     // copy image 
@@ -114,79 +165,110 @@ erodeImage3by3Kernel(IMAGE *img, uint8_t CFGval)
             }
         }
     }
+    return E_hdcr_SUCCESS;
 }
 
-/*
- * opening is the dilation of the erosion of a set A by a structuring element B:
+
+
+/* opening is the dilation of the erosion of a set A by a structuring element B:
  * A ∘ B = ( A ⊖ B ) ⊕ B
- * 
  */
-void openImage(IMAGE *img, uint8_t CFGval)
+error_hdcr_t openImage(IMAGE *img, uint8_t CFGval)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+ 
     erodeImage3by3Kernel(img, CFGval);
     dilateImage3by3Kernel(img, CFGval);
+
+    return E_hdcr_SUCCESS;
+}
+
+error_hdcr_t subractImage(IMAGE *x, IMAGE *y, uint8_t CFGval)
+{
+     for (int r=0; r<x->n_rows; r++) {
+        for (int c=0; c<x->n_cols; c++) {
+            if (y->raw_bits[r][c] == CFGval && x->raw_bits[r][c] == CFGval)
+                if (CFGval == 255)
+                    y->raw_bits[r][c] == 0;
+                else
+                    y->raw_bits[r][c] == 255;
+                
+        }
+    }
+    return E_hdcr_SUCCESS;
+}
+
+// y into x
+error_hdcr_t bitwise_or(IMAGE *x, IMAGE *y, uint8_t CFGval)
+{
+    for (int r=0; r<x->n_rows; r++) {
+        for (int c=0; c<x->n_cols; c++) {
+            if (y->raw_bits[r][c] == CFGval) 
+                x->raw_bits[r][c] == CFGval;
+        }
+    }
+    return E_hdcr_SUCCESS;
 }
 
 
-void subtractImage(IMAGE *img, IMAGE *tmp)
+
+
+error_hdcr_t skeletizeImage(IMAGE *img, uint8_t CFGval)
 {
+    /* skeletonization is simply just repeated erosion. */
+    // example algo: http://opencvpython.blogspot.com/2012/05/skeletonization-using-opencv-python.html
 
+    // //copy the image
+    // IMAGE temp;
+    // uint8_t **tempRawBits = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
+    // temp.raw_bits = tempRawBits;
+    // for (int r=0; r<img->n_rows; r++)
+    //     //for (int c=0; c<img->n_cols;c++)
+    //         //temp->raw_bits[r][c] = img->raw_bits[r][c];
+    // temp.n_cols = img->n_cols;
+    // temp.n_rows = img->n_rows;
 
-}
+    // IMAGE skel;
+    // uint8_t **skelRawBits = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
+    // skel.raw_bits = skelRawBits;
+    // for (int r=0; r<img->n_rows; r++)
+    //     for (int c=0; c<img->n_cols;c++)
+    //         skel.raw_bits[r][c] = 0;
+    // skel.n_cols = img->n_cols;
+    // skel.n_rows = img->n_rows;
 
-/* skeletonization of an image
- *
- * skeletonization can be achieved by using dilation and erosion.
- * 
- * using a 3x3 cross kernel as the structuring element as such:
- *     0 1 0
- *     1 1 1
- *     0 1 0
- * 
- * Algorithm is as follows:
- *      Sn(X) = (X ⊖ nB) - (X ⊖ nB)∘B
- * where
- *      B is the structuring element
- *      X is the binary image
- * 
- * 
- */
-void skeletizeImage(IMAGE *img, uint8_t CFGval)
-{
+    for (int i =0; i<4; i++)
+        erodeImage3by3Kernel(img, CFGval);
 
-
-    // copy the image
-
-    //IMAGE temp;
-    //uint8_t **tempRawBits = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(uint8_t));
-    //temp->raw_bits = tempRawBits;
-    //for (int r=0; r<img->n_rows; r++)
-        //for (int c=0; c<img->n_cols;c++)
-            //temp->raw_bits[r][c] = img->raw_bits[r][c];
-    //temp->n_cols = img->n_cols;
-    //temp->n_rows = img->n_rows;
-
-
-    ZhangSuenThinning(img, CFGval);
     //while (1) {
-    //    ZhangSuenThinning(img, CFGval);
+    //    // erode
+    //    erodeImage3by3Kernel(img, CFGval);
 
-    //    // open image
-    //    openImage(img, CFGval);
+    //    // dilate
+    //    dilateImage3by3Kernel(temp, CFGval);
 
-    //    // subtract open from original image
-    //    temp = subtractImage(img, temp));
+    //    // subtract
+    //    subtractImage(img, temp, CFGval);
 
-    //    // erode image
+    //    // bitwise_or
+    //    bitwise_or(skel, temp);
+
+    //    if (!countNonZero(img)) break;
     //}
 
-    //matfree(temp.raw_bits);
+    // matfree(temp.raw_bits);
+    return E_hdcr_SUCCESS;
 }
 
-
-void removeBranchPoints(IMAGE *img, uint8_t CFGval)
+error_hdcr_t removeBranchPoints(IMAGE *img, uint8_t CFGval)
 {
-    
 
 
+   return E_hdcr_NOT_IMPLEMENTED;
 }

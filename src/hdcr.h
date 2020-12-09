@@ -34,7 +34,8 @@ error_hdcr_t hdcr_run_program(
     uint8_t CGL, // ComponentGrayLevel
     bool verbose,
     bool write,
-    char* imgType
+    char* imgType,
+    bool benchmark
     );
 
 #endif /* HDCR_H */

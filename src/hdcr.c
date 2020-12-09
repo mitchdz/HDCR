@@ -8,6 +8,9 @@
 #include "thresh.h"
 #include "IO.h"
 #include "morph.h"
+#include "thinning.h"
+
+void run_benchmarks(IMAGE *img, char* imageName);
 
 char *concat3Strings(char* str1, char* str2, char* str3)
 {
@@ -37,31 +40,39 @@ void __removeBranchpoints(IMAGE *img, uint8_t CGL, bool verbose, bool write)
     if (write) writePNG(img, (char *)"demo/Circuit2-1_branchpoint.png");
 }
 
-void __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
+error_hdcr_t __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
 {
     if (verbose) printf("Thresholding...\n");
     threshold2DPseudoArray(img->raw_bits, img->n_rows, img->n_cols, threshold);
     if (write) writePNG(img, (char *)"demo/Circuit2-1_thresh.png");
     if (verbose) printf("\tDone.\n");
+    return E_hdcr_SUCCESS;
 }
 
 
-void __thicken(IMAGE *img, uint8_t CGL, bool verbose, bool write)
+error_hdcr_t __thicken(IMAGE *img, uint8_t CGL, bool verbose, bool write)
 {
+    error_hdcr_t err = E_hdcr_SUCCESS;
+
     int numThickening = 3;
     if (verbose) printf("Thickening %d time(s)...\n", numThickening);
-    thickenImage(img, numThickening, CGL);
+    err = thickenImage(img, numThickening, CGL);
     if (verbose) printf("\tDone\n");
-
     if (write) writePNG(img, (char *)"demo/Circuit2-1_thicken.png");
+
+    return err;
 }
 
-void __dilate(IMAGE* img, uint8_t CGL, bool verbose, bool write)
+error_hdcr_t __dilate(IMAGE* img, uint8_t CGL, bool verbose, bool write)
 {
+    error_hdcr_t err = E_hdcr_SUCCESS;
+
     if (verbose) printf("dilating with a 3x3 kernel...\n");
-    dilateImage3by3Kernel(img, CGL);
+    err = dilateImage3by3Kernel(img, CGL);
     if (verbose) printf("\tDone\n");
     if (write) writePNG(img, (char *)"demo/Circuit2-1_Dilation.png");
+
+    return err;
 }
 
 
@@ -90,7 +101,8 @@ error_hdcr_t hdcr_run_program(
     uint8_t CGL, // ComponentGrayLevel
     bool verbose,
     bool write,
-    char* imgType
+    char* imgType,
+    bool benchmark
     )
 {
     //TODO: error detection
@@ -104,10 +116,23 @@ error_hdcr_t hdcr_run_program(
     /*** read the input file and store it into IMAGE struct ***/
     IMAGE img; 
     readPNGandClose(inputImageFileName, &img);
-
-    writePNG(&img, outputImageFileName);
     
-    // if verbose, print image size
+    /* Connected Component Image */
+    IMAGE CCImage;
+    uint8_t **CCImage_raw_bits = 
+        matalloc(img.n_rows, img.n_cols, 0, 0, sizeof(uint8_t));
+
+    CCImage.n_cols = img.n_cols;
+    CCImage.n_rows = img.n_rows;
+    CCImage.raw_bits = CCImage_raw_bits;
+
+    // if benchmark flag is enabled, run benchmarks
+    if (benchmark) {
+        run_benchmarks(&img, inputImageFileName);
+        goto cleanup;
+    }
+
+    /* find adaptive threshold */
     if (verbose) {
         printf("%s is a %dx%d grayscale image\n", inputImageFileName, img.n_rows, img.n_cols);
     }
@@ -121,28 +146,58 @@ error_hdcr_t hdcr_run_program(
         threshold = inputThreshold;
     }
 
-    erodeImage3by3Kernel(&img, CGL);
-    if (write) writePNG(&img, (char *)"demo/Circuit2-1_erode.png");
 
     /******** threshold **********/
-    __threshold(&img, threshold, verbose, write);
+    err = __threshold(&img, threshold, verbose, write);
+    if (err != E_hdcr_SUCCESS) {
+        printError(err, (char *)"error thresholding"); goto cleanup;
+    }
 
     /******** thicken **********/
-    __thicken(&img, CGL, verbose, write);
+    err = __thicken(&img, CGL, verbose, write);
+    if (err != E_hdcr_SUCCESS) {
+        printError(err, (char *)"error thickening"); goto cleanup;
+    }
 
     /******** dilate **********/
-    __dilate(&img, CGL, verbose, write);
+    err = __dilate(&img, CGL, verbose, write);
+    if (err != E_hdcr_SUCCESS) {
+        printError(err, (char *)"error dilating"); goto cleanup;
+    }
 
+    // thin the image consecutively
+    for (int i=0; i<5; i++)
+        ZhangSuenThinning(&img, CGL);
+
+    // erode the image consecutively
+    for (int i=0; i<4; i++)
+        erodeImage3by3Kernel(&img, CGL);
+
+    if (write) writePNG(&img, (char *)"demo/Circuit2-1_skeletonize.png");
+
+
+
+    int numberOfComponents;
+    iterativeCCL(&img, CCImage.raw_bits, CGL, &numberOfComponents, verbose);
+    if (verbose) printf("there are %d sets of components\n", numberOfComponents);
+
+
+    // if any group has less than 
+
+
+
+
+
+    // usually you would wnat to skeletonize to detect branchpoints, but
+    // in our case it's actually better to not. This is because if you fully
+    // skeletize the image, some branches will be connected in the 8-connected
+    // sense.
     /******** skeletonize **********/
-    __skeletonize(&img, CGL, verbose, write);
-
+    //__skeletonize(&img, CGL, verbose, write);
 
     /********* remove branchpoints ********/
     //__removeBranchpoints(&img, CGL, verbose, write);
    
-
-
-
 
     /********* Find centroids & bounding box ********/
     //if (verbose) printf("Finding Centroids and bounding box...\n");
@@ -157,11 +212,20 @@ error_hdcr_t hdcr_run_program(
     /********* merge cluster bounding boxes with branchpoints & connect *******/
     // TODO: implement
 
-
+cleanup:
+    matfree(CCImage_raw_bits);
+    matfree(img.raw_bits);
     return err;
-}
+} // end of hdcr_run_program
 
-error_hdcr_t  detectNumberOfCircuitComponents(IMAGE *img)
+void run_benchmarks(IMAGE *img, char* imageName)
 {
-    return E_hdcr_NOT_IMPLEMENTED;
+    printf("Timing benchmarks for libhdcr using %s\n", imageName);
+
+    /* erosion */
+
+
+
+
+
 }
