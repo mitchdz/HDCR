@@ -19,12 +19,6 @@ char *concat3Strings(char* str1, char* str2, char* str3)
     return qq;
 }
 
-void printWelcomeMessage(char* input, char* output)
-{
-    printf("Hand Drawn Circuit Recognizer\n");
-    printf("\t input: %s\n", input);
-    printf("\t output: %s\n", output);
-}
 
 void __skeletonize(IMAGE *img, uint8_t CGL, bool verbose, bool write)
 {
@@ -71,6 +65,12 @@ void __dilate(IMAGE* img, uint8_t CGL, bool verbose, bool write)
 }
 
 
+void printWelcomeMessage(char* input, char* output)
+{
+    printf("Hand Drawn Circuit Recognizer\n");
+    printf("\t input: %s\n", input);
+    printf("\t output: %s\n", output);
+}
 
 /*
  * hdcr steps:
@@ -121,6 +121,9 @@ error_hdcr_t hdcr_run_program(
         threshold = inputThreshold;
     }
 
+    erodeImage3by3Kernel(&img, CGL);
+    if (write) writePNG(&img, (char *)"demo/Circuit2-1_erode.png");
+
     /******** threshold **********/
     __threshold(&img, threshold, verbose, write);
 
@@ -136,7 +139,7 @@ error_hdcr_t hdcr_run_program(
 
     /********* remove branchpoints ********/
     //__removeBranchpoints(&img, CGL, verbose, write);
-
+   
 
 
 

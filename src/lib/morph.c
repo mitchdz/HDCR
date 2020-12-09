@@ -94,18 +94,18 @@ erodeImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 
     for (r=1; r<img->n_rows-1; r++) {
         for(c=1; c<img->n_cols-1; c++) {
-            if (img->markers[r-1][c]   == CFGval
-             && img->markers[r-1][c+1] == CFGval
-             && img->markers[r-1][c-1] == CFGval
-             && img->markers[r][c-1]   == CFGval
-             && img->markers[r][c+1]   == CFGval
-             && img->markers[r+1][c]   == CFGval
-             && img->markers[r+1][c+1] == CFGval)
+            if (markers[r-1][c]   == CFGval
+             && markers[r-1][c+1] == CFGval
+             && markers[r-1][c-1] == CFGval
+             && markers[r][c-1]   == CFGval
+             && markers[r][c+1]   == CFGval
+             && markers[r+1][c]   == CFGval
+             && markers[r+1][c+1] == CFGval)
             {
                 continue;
             }
             else {
-                if (CFGval=255) {
+                if (CFGval==255) {
                     img->raw_bits[r][c] = 0;
                 }
                 else {

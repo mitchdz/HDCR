@@ -16,12 +16,27 @@ void printhdcrHelp()
     printf("\t\t<filename> is the name of the output file\n");
     printf("\t-m <value>\n");
     printf("\t\t<value> MaxOutputValue should be either 0 or 255 where 0 ");
-    printf("would indicate ncomponents\n");
+    printf("would indicate ncomponents, default 0\n");
     printf("\t-c <value>\n");
-    printf("\t\t<value> is either 0 or 1 indicating ComponentGrayLevel\n");
+    printf("\t\t<value> is either 0 or 255 indicating ComponentGrayLevel, default 0\n");
+    printf("\t-a <value>\n");
+    printf("\t\tadaptive threshold type. Currently support 'otsu' and 'kittler' (default otsu)\n");
+    printf("\t-v\n");
+    printf("\t\tverbose (enabled by default)\n");
+    printf("\t-s\n");
+    printf("\t\tsilent, supress commandline output\n");
+    printf("\t-D\n");
+    printf("\t\tdebug, print to console and write images to filesystem (sets -w -v)\n");
+    printf("\t-t\n");
+    printf("\t\t(optional) threshold, value between 0 and 255\n");
     printf("\t-v\n");
     printf("\t\tverbose\n");
+    printf("\t-h\n");
+    printf("\t\tprint help menu\n");
 }
+
+
+
 
 int main(int argc,char* argv[]) {
     error_hdcr_t err = E_hdcr_GENERIC_ERROR;
