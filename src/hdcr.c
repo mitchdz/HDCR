@@ -176,7 +176,7 @@ error_hdcr_t hdcr_run_program(
     for (int i=0; i<4; i++)
         erodeImage3by3Kernel(&img, CGL);
 
-    if (write) writePNG(&img, (char *)"demo/Circuit2-1_skeletonize.png");
+    if (write) writePNG(&img, outputImageFileName);
 
     int numberOfComponents;
     if (verbose) printf("Detecting number of maximally connected components...\n");
@@ -187,18 +187,18 @@ error_hdcr_t hdcr_run_program(
     // OverlayComponentsOntoImage(&img, CCImage.raw_bits, numberOfComponents, CGL, 255);
     // if (write) writePNG(&img, (char *)"demo/Circuit2-1_overlay.png");
 
-    int numberNewComponents;
-    removeSmallComponents(&img, CCImage.raw_bits, numberOfComponents, CGL, numberNewComponents);
-    if (verbose) printf("there are %d sets of components after removing small components\n", numberNewComponents);
-    if (write) writePNG(&img, (char *)"demo/Circuit2-1_removedSmall.png");
+    //int numberNewComponents;
+    //removeSmallComponents(&img, CCImage.raw_bits, numberOfComponents, CGL, numberNewComponents);
+    //if (verbose) printf("there are %d sets of components after removing small components\n", numberNewComponents);
+    //if (write) writePNG(&img, (char *)"demo/Circuit2-1_removedSmall.png");
 
     // get bounding box for each component
 
     // SSIM for each component
-    double SSIM_threshold = 90;
-    for (int i=0; i<numberNewComponents; i++) {
-        // SSIM bounding box to each dataset images
-    }
+    //double SSIM_threshold = 90;
+    //for (int i=0; i<numberNewComponents; i++) {
+    //    // SSIM bounding box to each dataset images
+    //}
 
 cleanup:
     matfree(CCImage_raw_bits);
