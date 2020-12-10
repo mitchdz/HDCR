@@ -176,13 +176,13 @@ error_hdcr_t erodeImage3by3Kernel(IMAGE *img, uint8_t CFGval)
 error_hdcr_t openImage(IMAGE *img, uint8_t CFGval)
 {
     // basic error checking
-    if (img->n_rows == 0 
+    if (img->n_rows == 0
         || img->n_cols == 0
-        || img->raw_bits == NULL) 
-    {            
+        || img->raw_bits == NULL)
+    {
         return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
     }
- 
+
     erodeImage3by3Kernel(img, CFGval);
     dilateImage3by3Kernel(img, CFGval);
 
@@ -193,12 +193,12 @@ error_hdcr_t subractImage(IMAGE *x, IMAGE *y, uint8_t CFGval)
 {
      for (int r=0; r<x->n_rows; r++) {
         for (int c=0; c<x->n_cols; c++) {
-            if (y->raw_bits[r][c] == CFGval && x->raw_bits[r][c] == CFGval)
+            if (y->raw_bits[r][c] == CFGval && x->raw_bits[r][c] == CFGval) {
                 if (CFGval == 255)
-                    y->raw_bits[r][c] == 0;
+                    y->raw_bits[r][c] = 0;
                 else
-                    y->raw_bits[r][c] == 255;
-                
+                    y->raw_bits[r][c] = 255;
+            }
         }
     }
     return E_hdcr_SUCCESS;
@@ -209,8 +209,8 @@ error_hdcr_t bitwise_or(IMAGE *x, IMAGE *y, uint8_t CFGval)
 {
     for (int r=0; r<x->n_rows; r++) {
         for (int c=0; c<x->n_cols; c++) {
-            if (y->raw_bits[r][c] == CFGval) 
-                x->raw_bits[r][c] == CFGval;
+            if (y->raw_bits[r][c] == CFGval)
+                x->raw_bits[r][c] = CFGval;
         }
     }
     return E_hdcr_SUCCESS;

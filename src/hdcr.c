@@ -227,9 +227,7 @@ void run_benchmarks(char* imageName, uint8_t CGL)
     printf("Timing benchmarks for libhdcr using %s\n", imageName);
 
     /* erosion */
-    printf("erodeImage3by3Kernel, ")
-    
-    
+    printf("erodeImage3by3Kernel, ");
     erodeImage3by3Kernel(&test, CGL);
 
 
