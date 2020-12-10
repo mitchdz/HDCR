@@ -26,13 +26,16 @@ typedef struct {
 
 error_hdcr_t hdcr_run_program(
     char* inputImageFileName,
-    char* outputImageFilName, 
+    char* outputImageFileName,
     bool adaptiveThreshold,
     ADAPTIVE_THRESHOLD_TYPE att,
     uint8_t inputThreshold,
     uint8_t MOV, //MaxOutputValue
     uint8_t CGL, // ComponentGrayLevel
-    bool verbose 
+    bool verbose,
+    bool write,
+    char* imgType,
+    bool benchmark
     );
 
 #endif /* HDCR_H */

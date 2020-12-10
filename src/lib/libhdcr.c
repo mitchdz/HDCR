@@ -1,4 +1,5 @@
 #include "libhdcr.h"
+#include "dip.h"
 
 /* helper function to easily decode error message */
 struct _errordesc{
@@ -12,6 +13,7 @@ struct _errordesc{
     { E_hdcr_NOT_IMPLEMENTED,  (char *)"Not implemented yet" },
     { E_hdcr_RECURSIVE_FIRST_LAST_NOT_FOUND, (char *)"Recursive first and last index not able to be found"},
     { E_hdcr_NOT_IMPLEMENTED, (char *)"Not implemented"},
+    { E_hdcr_STRUCT_PARAMETERS_NOT_SET, (char *)"Struct does not have members properly set"},
 };
 
 void printError(error_hdcr_t E, char *msg)
