@@ -9,8 +9,7 @@
 #include "IO.h"
 #include "morph.h"
 #include "thinning.h"
-
-void run_benchmarks(char* imageName, uint8_t CGL);
+#include "benchmarking.h"
 
 char *concat3Strings(char* str1, char* str2, char* str3)
 {
@@ -219,18 +218,3 @@ cleanup:
     matfree(img.raw_bits);
     return err;
 } // end of hdcr_run_program
-
-void run_benchmarks(char* imageName, uint8_t CGL)
-{
-    IMAGE test;
-    readPNGandClose(imageName, &test);
-    printf("Timing benchmarks for libhdcr using %s\n", imageName);
-
-    /* erosion */
-    printf("erodeImage3by3Kernel, ");
-    erodeImage3by3Kernel(&test, CGL);
-
-
-
-
-}
