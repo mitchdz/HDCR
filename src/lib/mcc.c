@@ -6,11 +6,26 @@
 #include "thresh.h"
 #include <limits.h>
 
+typedef struct _componentSet {
+    uint8_t CGL;
+    int numPixels;
+
+    // for the bounding box
+    int x;
+    int y;
+    int height;
+    int width;
+} componentSet;
+
 struct mapNode {
     int key;
     int val;
     struct mapNode *next;
 };
+
+bool __checkForRemoval(componentSet set[], int setSize, uint8_t removeCondition, uint8_t pixelVal);
+void __incrementComponentSet(componentSet set[], int setSize, uint8_t CGL);
+
 
 static bool checkForeground(int value, bool CGL)
 {
@@ -44,9 +59,16 @@ struct mapNode *findMapNode(struct mapNode *head, int key)
     return NULL;
 }
 
-
-void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
+error_hdcr_t iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc,bool verbose)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+
     int r,c,i,M;
     int n[8], NW, N, NE, W, E, SW, S, SE; // neighbors
     int **l = matalloc(img->n_rows, img->n_cols, 0, 0, sizeof(int));
@@ -158,9 +180,11 @@ void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
     }
 
     // if verbose, print how many pixels in each component
-    for (i=0;i<valcount;i++) {
-        if (setCounts[i] != 0)
-            if (verbose) printf("set %d\t%d\n",i,setCounts[i]);
+    if (verbose) {
+        for (i=0;i<valcount;i++) {
+            if (setCounts[i] != 0)
+                printf("set %d\t%d\n",i,setCounts[i]);
+        }
     }
 
     // free dynamically allocated setCounts array
@@ -168,11 +192,176 @@ void iterativeCCL(IMAGE *img, uint8_t **outccM, bool CGL, int *nc, bool verbose)
 
     // set the numbercomponents value
     *nc = valcount - 1 ;
+    return E_hdcr_SUCCESS;
 }
 
-void OverlayComponentsOntoImage(IMAGE *img, uint8_t **ccM, int nc, bool CGL,
+
+void __incrementComponentSet(componentSet set[], int setSize, uint8_t CGL)
+{
+    // check all values until found
+    for (int i=0; i<setSize; i++) {
+        if (set[i].CGL == CGL && set[i].numPixels != -1) {
+            set[i].numPixels++;
+            goto end;
+        }
+    }
+    // code execution only gets here if no set found
+    for (int i=0; i<setSize; i++) {
+        if (set[i].numPixels==-1) {
+            set[i].numPixels = 1;
+            set[i].CGL = CGL;
+            goto end;
+        }
+    }
+end:
+    return;
+}
+
+bool __checkForRemoval(componentSet set[], int setSize, uint8_t removeCondition, uint8_t pixelVal)
+{
+    for (int i=0; i<setSize; i++) {
+        if (set[i].CGL == pixelVal) {
+            if (set[i].numPixels < removeCondition) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+}
+
+// !!! ccM MUST be the same size as img->raw_bits
+// CGL = ComponentGrayLevel
+error_hdcr_t removeSmallComponents(IMAGE *img, uint8_t **ccM, int nc, uint8_t CGL, int *newNum)
+{
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+
+    int i, r, c;
+
+    int valcount = nc;
+    uint8_t removeCondition = 20;
+
+    // create componentSet nodes
+    componentSet cS[valcount];
+    for (i=0; i<valcount; i++) {
+        cS[i].numPixels=-1;
+    }
+    
+    bool found;
+    for (r=0; r<img->n_rows; r++) {
+        for (c=0; c<img->n_cols; c++) {
+            if (img->raw_bits[r][c] == CGL) {
+                found = false;
+                for (i=0; i<valcount; i++) {
+                    if ((cS[i].CGL == ccM[r][c]) && (cS[i].numPixels != -1)) {
+                        cS[i].numPixels++;
+                        found = true;
+                    }
+                }
+                if (!found) { //if pixel is not in the set
+                    for (i=0; i<valcount; i++) {
+                        if ((cS[i].numPixels == -1)) {
+                            cS[i].numPixels = 1;
+                            cS[i].CGL = ccM[r][c];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    int temp;
+    for (r=0; r<img->n_rows; r++) {
+        for (c=0; c<img->n_cols; c++) {
+            for (i=0; i<valcount; i++) {
+                if ((cS[i].CGL == ccM[r][c]) && (cS[i].numPixels > 0) && (cS[i].numPixels <removeCondition)) {
+                    if (CGL == 255) {
+                        ccM[r][c] = 0;
+                    }
+                    else {
+                        ccM[r][c] = 255;
+                    }
+                }
+            }
+
+        }
+    }
+
+    int newSets=0;
+    for (i=0; i<valcount; i++) {
+        if (cS[i].numPixels != -1) newSets++;
+    }
+    *newNum = newSets;
+
+    /* // old implementation
+    int numberSets = nc; 
+
+    // create and initialize a set of componentSet structs
+    componentSet cS[numberSets];
+    for (int i=0; i<numberSets; i++) cS[i].numPixels=-1;
+
+    for (int r=0; r<img->n_rows; r++) {
+        for (int c=0; c<img->n_cols; c++) {
+            if (CGL == 255) {
+                if (ccM != 0) {
+                    __incrementComponentSet(&cS, numberSets, ccM[r][c]);
+                }
+            } // end CGL check
+            else {
+                if (ccM != 255) {
+                    __incrementComponentSet(&cS, numberSets, ccM[r][c]);
+                }
+            } // end else
+        } // end col
+    } // end row
+    
+    // go through image and check each group if it should be removed
+    for (int r=0; r<img->n_rows; r++) {
+        for (int c=0; c<img->n_cols; c++) {
+            if (__checkForRemoval(&numberSets, numberSets, removeCondition, ccM[r][c])) {
+                if (CGL == 255) {
+                    ccM[r][c] = 0;
+                }
+                else {
+                    ccM[r][c] = 255;
+                }
+            } // end if
+        } // end col
+    } // end row
+
+    int numNewSets = 0;
+
+    for (int i=0; i<numberSets; i++) {
+        if (cS[i].numPixels != -1) {
+            numNewSets++;
+        }
+    }
+    *newNum = numNewSets;
+    */
+
+    return E_hdcr_SUCCESS;
+}
+
+
+error_hdcr_t OverlayComponentsOntoImage(IMAGE *img, uint8_t **ccM, int nc, bool CGL,
     bool MOV)
 {
+    // basic error checking
+    if (img->n_rows == 0 
+        || img->n_cols == 0
+        || img->raw_bits == NULL) 
+    {            
+        return E_hdcr_STRUCT_PARAMETERS_NOT_SET;
+    }
+    
     int r,c, k, outputPixelValue, maxOutputValue;
 
     if (MOV) { maxOutputValue = 255; }
@@ -192,5 +381,5 @@ void OverlayComponentsOntoImage(IMAGE *img, uint8_t **ccM, int nc, bool CGL,
 
         } // end col 2nd pass
     } // end row 2nd pass
-    return;
+    return E_hdcr_SUCCESS;
 }

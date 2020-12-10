@@ -25,6 +25,18 @@ void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
 }
 
 
+
+void openCV2Erode(IMAGE *img)
+{
+    Mat inputMat = convertIMAGEtoMat(img);
+    Mat outputMat = convertIMAGEtoMat(img);
+
+    
+
+}
+
+
+
 /*
 void adaptiveThresholdOtsu(IMAGE *img, uint8_t *t)
 {

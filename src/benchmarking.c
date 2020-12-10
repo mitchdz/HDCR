@@ -31,12 +31,31 @@ void run_benchmarks(char* imageName, uint8_t CGL)
     printf("%lf\n", cpu_time_used);
 
 
+    /* dilation */
     printf("dilateImage3by3Kernel, ");
     start = clock();
     dilateImage3by3Kernel(&test, CGL);
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("%lf\n", cpu_time_used);
+
+
+    /* thinning */
+    printf("Zhang-Suen Thinning, ");
+    start = clock();
+    ZhangSuenThinning(&test, CGL);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%lf\n", cpu_time_used);
+
+    /* thickening */
+    printf("thickenImage, ");
+    start = clock();
+    thickenImage(&test, 1, CGL);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%lf\n", cpu_time_used);
+
 
 
 }

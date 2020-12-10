@@ -27,7 +27,7 @@ void __skeletonize(IMAGE *img, uint8_t CGL, bool verbose, bool write)
     if (verbose) printf("Skeletonizing Image...\n");
     skeletizeImage(img, CGL);
     if (verbose) printf("\tDone\n");
-    if (write) writePNG(img, (char *)"demo/Circuit2-1_skeletonize.png");
+    if (write) writePNG(img, (char *)"demo/Circuit_skeletonize.png");
 }
 
 
@@ -36,14 +36,14 @@ void __removeBranchpoints(IMAGE *img, uint8_t CGL, bool verbose, bool write)
     if (verbose) printf("Removing branchpoints...\n");
     removeBranchPoints(img, CGL);
     if (verbose) printf("\tDone\n");
-    if (write) writePNG(img, (char *)"demo/Circuit2-1_branchpoint.png");
+    if (write) writePNG(img, (char *)"demo/Circuit_branchpoint.png");
 }
 
 error_hdcr_t __threshold(IMAGE *img, uint8_t threshold, bool verbose, bool write)
 {
     if (verbose) printf("Thresholding...\n");
     threshold2DPseudoArray(img->raw_bits, img->n_rows, img->n_cols, threshold);
-    if (write) writePNG(img, (char *)"demo/Circuit2-1_thresh.png");
+    if (write) writePNG(img, (char *)"demo/Circuit_thresh.png");
     if (verbose) printf("\tDone.\n");
     return E_hdcr_SUCCESS;
 }
@@ -57,7 +57,7 @@ error_hdcr_t __thicken(IMAGE *img, uint8_t CGL, bool verbose, bool write)
     if (verbose) printf("Thickening %d time(s)...\n", numThickening);
     err = thickenImage(img, numThickening, CGL);
     if (verbose) printf("\tDone\n");
-    if (write) writePNG(img, (char *)"demo/Circuit2-1_thicken.png");
+    if (write) writePNG(img, (char *)"demo/Circuit_thicken.png");
 
     return err;
 }
@@ -69,7 +69,7 @@ error_hdcr_t __dilate(IMAGE* img, uint8_t CGL, bool verbose, bool write)
     if (verbose) printf("dilating with a 3x3 kernel...\n");
     err = dilateImage3by3Kernel(img, CGL);
     if (verbose) printf("\tDone\n");
-    if (write) writePNG(img, (char *)"demo/Circuit2-1_Dilation.png");
+    if (write) writePNG(img, (char *)"demo/Circuit_Dilation.png");
 
     return err;
 }
@@ -166,6 +166,8 @@ error_hdcr_t hdcr_run_program(
         printError(err, (char *)"error dilating"); goto cleanup;
     }
 
+    // found out by hand that thinning and eroding the following times works well for the given image.
+
     // thin the image consecutively
     for (int i=0; i<5; i++)
         ZhangSuenThinning(&img, CGL);
@@ -176,42 +178,27 @@ error_hdcr_t hdcr_run_program(
 
     if (write) writePNG(&img, (char *)"demo/Circuit2-1_skeletonize.png");
 
-
-
     int numberOfComponents;
+    if (verbose) printf("Detecting number of maximally connected components...\n");
     iterativeCCL(&img, CCImage.raw_bits, CGL, &numberOfComponents, verbose);
+    if (verbose) printf("\tDone\n");
     if (verbose) printf("there are %d sets of components\n", numberOfComponents);
 
+    // OverlayComponentsOntoImage(&img, CCImage.raw_bits, numberOfComponents, CGL, 255);
+    // if (write) writePNG(&img, (char *)"demo/Circuit2-1_overlay.png");
 
-    // if any group has less than 
+    int numberNewComponents;
+    removeSmallComponents(&img, CCImage.raw_bits, numberOfComponents, CGL, numberNewComponents);
+    if (verbose) printf("there are %d sets of components after removing small components\n", numberNewComponents);
+    if (write) writePNG(&img, (char *)"demo/Circuit2-1_removedSmall.png");
 
+    // get bounding box for each component
 
-
-
-
-    // usually you would wnat to skeletonize to detect branchpoints, but
-    // in our case it's actually better to not. This is because if you fully
-    // skeletize the image, some branches will be connected in the 8-connected
-    // sense.
-    /******** skeletonize **********/
-    //__skeletonize(&img, CGL, verbose, write);
-
-    /********* remove branchpoints ********/
-    //__removeBranchpoints(&img, CGL, verbose, write);
-   
-
-    /********* Find centroids & bounding box ********/
-    //if (verbose) printf("Finding Centroids and bounding box...\n");
-    // TODO: implement
-    
-    /********* Merge Centroid Clusters ********/
-    // TODO: implement
-
-    /********* SSIM to classify image ********/
-    // TODO: implement
-
-    /********* merge cluster bounding boxes with branchpoints & connect *******/
-    // TODO: implement
+    // SSIM for each component
+    double SSIM_threshold = 90;
+    for (int i=0; i<numberNewComponents; i++) {
+        // SSIM bounding box to each dataset images
+    }
 
 cleanup:
     matfree(CCImage_raw_bits);
